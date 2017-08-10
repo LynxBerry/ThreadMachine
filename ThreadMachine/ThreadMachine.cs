@@ -26,26 +26,31 @@ namespace ThreadMachine
         {
             this.workItem = workItem;
         }
-        public void WorkProc(Object state)
+
+        /*
+         * WorkProc is a wrapper for workItem.DoWork().
+         * The reason for this wrapper is to make sure all the **multi-thread** related work would be done.
+         */
+        internal void WorkProc(Object state) 
         {
-            threadMachine.WriteShareData(workItem.DoWork());
-            threadMachine.DoneWork();
+            threadMachine.WriteShareData(workItem.DoWork()); // Access the shared storage to store result of DoWork() safely under multi-thread.
+            threadMachine.DoneWork(); // Notify threadMachine that the work has been done.
         }
 
     }
     public class ThreadMachine
     {
-        private AutoResetEvent objFinishEvent = new AutoResetEvent(false);
-        private int nItems = 0;
-        private List<ThreadItem> lItems = new List<ThreadItem>();
-        private int nItemProccessed = 0;
-        private object objLock = new Object();
-        private List<Object> dictResults = new List<Object>();
+        private AutoResetEvent objFinishEvent = new AutoResetEvent(false); // For thread to wait upon.
+        private int nItems = 0; // Store total num of threads to be started.
+        private List<ThreadItem> lItems = new List<ThreadItem>(); //Actual work items.
+        private int nItemProccessed = 0; // The number of finished work items.
+        private object objLock = new Object(); // used to lock critical section.
+        private List<Object> dictResults = new List<Object>(); // for collecting results. 
 
 
         public ThreadMachine()
         {
-            
+            //nothing to do
         }
 
         public List<Object> GetResults()
@@ -53,7 +58,7 @@ namespace ThreadMachine
             return dictResults;
         }
 
-        public void WriteShareData(Object obj)
+        internal void WriteShareData(Object obj) //avoid client from accessing this method.
         {
             lock (objLock) //maybe unecessary.
             {
@@ -81,10 +86,11 @@ namespace ThreadMachine
 
         public void InvokeMultiThread()
         {
-            int count = 1;
+            int count = 0;
             foreach (ThreadItem threadItem in lItems)
             {
-                
+                count++;
+
                 ThreadPool.QueueUserWorkItem(new WaitCallback(threadItem.WorkProc));
                 
                 if ((count % 20) == 0)
@@ -94,7 +100,7 @@ namespace ThreadMachine
                     //sleep 20 seconds
                     Thread.Sleep(20000);
                 }
-                count++;
+                
             }
 
             this.objFinishEvent.WaitOne();
