@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 namespace ThreadMachine
 {
     //Example of consumer
-    public class WorkItem: IWorkItem
+    public class WorkItem
     {
         private string strID;
         public WorkItem(string strID)
         {
             this.strID = strID; 
         }
-        public Object DoWork()
+        public string DoWork()
         {
+            Console.WriteLine(this.strID + ":hello");
             return this.strID + ":Say Something";
         }
     }

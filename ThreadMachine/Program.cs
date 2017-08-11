@@ -34,12 +34,12 @@ namespace ThreadMachine
         }
         static void Main(string[] args)
         {
-            ThreadMachine thMachine = new ThreadMachine();
+            ThreadMachine<string> thMachine = new ThreadMachine<string>();
             //string[] lNames = { "abc", "efg", "hig"};
             IList<string> lItems = ReadFileToServerList(@"c:\users\stevensh\list.txt");
             foreach (string lname in lItems)
             {
-                thMachine.QueueItem(new ThreadItem(new WorkItem(lname)));
+                thMachine.QueueItem(new WorkItem(lname).DoWork);
             }
 
             thMachine.InvokeMultiThread();

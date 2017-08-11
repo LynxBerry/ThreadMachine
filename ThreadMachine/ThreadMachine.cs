@@ -7,45 +7,40 @@ using System.Threading;
 
 namespace ThreadMachine
 {
-    public class ThreadItem
+    public class ThreadItem<T>
     {
-        private ThreadMachine threadMachine;
-        private IWorkItem workItem;
+        private ThreadMachine<T> threadMachine;
+        private Func<T> doWork;
 
-        public ThreadItem(IWorkItem workItem)
+        internal ThreadItem(Func<T> doWork) //customer has no need to know.
         {
-            this.workItem = workItem;
+            this.doWork = doWork;
         }
 
-        public void setThreadMachine(ThreadMachine threadMachine)
+        internal void setThreadMachine(ThreadMachine<T> threadMachine)
         {
             this.threadMachine = threadMachine;
-        }
-
-        public void setWorkItem(IWorkItem workItem)
-        {
-            this.workItem = workItem;
         }
 
         /*
          * WorkProc is a wrapper for workItem.DoWork().
          * The reason for this wrapper is to make sure all the **multi-thread** related work would be done.
          */
-        internal void WorkProc(Object state) 
+        internal void WorkProc(Object state) // The param here is just for aligning with signature of thread's delegate.
         {
-            threadMachine.WriteShareData(workItem.DoWork()); // Access the shared storage to store result of DoWork() safely under multi-thread.
+            threadMachine.WriteShareData(doWork()); // Access the shared storage to store result of doWork() safely under multi-thread.
             threadMachine.DoneWork(); // Notify threadMachine that the work has been done.
         }
 
     }
-    public class ThreadMachine
+    public class ThreadMachine<T>
     {
         private AutoResetEvent objFinishEvent = new AutoResetEvent(false); // For thread to wait upon.
         private int nItems = 0; // Store total num of threads to be started.
-        private List<ThreadItem> lItems = new List<ThreadItem>(); //Actual work items.
+        private List<ThreadItem<T>> lItems = new List<ThreadItem<T>>(); //Actual work items.
         private int nItemProccessed = 0; // The number of finished work items.
         private object objLock = new Object(); // used to lock critical section.
-        private List<Object> dictResults = new List<Object>(); // for collecting results. 
+        private List<T> dictResults = new List<T>(); // for collecting results. 
 
 
         public ThreadMachine()
@@ -53,12 +48,12 @@ namespace ThreadMachine
             //nothing to do
         }
 
-        public List<Object> GetResults()
+        public List<T> GetResults()
         {
             return dictResults;
         }
 
-        internal void WriteShareData(Object obj) //avoid client from accessing this method.
+        internal void WriteShareData(T obj) //avoid client from accessing this method.
         {
             lock (objLock) //maybe unecessary.
             {
@@ -68,7 +63,7 @@ namespace ThreadMachine
             }
         }
 
-        public void DoneWork()
+        internal void DoneWork()
         {
             if (Interlocked.Increment(ref nItemProccessed) == nItems)
             {
@@ -76,10 +71,11 @@ namespace ThreadMachine
             }
         }
 
-        public void QueueItem(ThreadItem threadItem)
+        public void QueueItem(Func<T> doWork)
         {
-            threadItem.setThreadMachine(this);
-            lItems.Add(threadItem);
+            var handle = new ThreadItem<T>(doWork);
+            handle.setThreadMachine(this);
+            lItems.Add(handle);
             nItems++;
 
         }
@@ -87,7 +83,7 @@ namespace ThreadMachine
         public void InvokeMultiThread()
         {
             int count = 0;
-            foreach (ThreadItem threadItem in lItems)
+            foreach (ThreadItem<T> threadItem in lItems)
             {
                 count++;
 
