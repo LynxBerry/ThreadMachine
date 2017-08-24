@@ -14,9 +14,16 @@ namespace TestForThreadMachine
         {
             this.strID = strID; 
         }
-        public string DoWork()
+        public string DoWork() // Normal Work
         {
             Console.WriteLine(DateTime.Now.ToString("hh:mm:ss tt") + "Test Case>>Do Work Started for: " + this.strID);
+            return this.strID + ":Say Something";
+        }
+
+        public string DoWorkWithError() // Work Will raise Exception
+        {
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss tt") + ":Test Case With Error>>Do Work Started for: " + this.strID);
+            throw new Exception("error" + this.strID);
             return this.strID + ":Say Something";
         }
     }

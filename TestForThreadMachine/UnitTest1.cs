@@ -20,5 +20,17 @@ namespace TestForThreadMachine
                 Console.WriteLine(strItem);
             };
         }
+        [TestMethod]
+        public void TestMethod2() //What if Do Work raise exception
+        {
+            ThreadMachine<string> thMachine = new ThreadMachine<string>();
+            List<string> lItems = TestHelper.ReadFileToServerList(@"TestMaterial\sl.txt");
+            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWorkWithError));
+            thMachine.InvokeMultiThread();
+            foreach (string strItem in thMachine.GetResults())
+            {
+                Console.WriteLine(strItem);
+            };
+        }
     }
 }
