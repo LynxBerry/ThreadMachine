@@ -23,11 +23,12 @@ namespace ThreadMachine
         }
 
         /*
-         * WorkProc is a wrapper for workItem.DoWork().
+         * WorkProc is a wrapper for <object of your customized class>.DoWork().
          * The reason for this wrapper is to make sure all the **multi-thread** related work would be done.
          */
         internal void WorkProc(Object state) // The param here is just for aligning with signature of thread's delegate.
         {
+            // To Do: Need to catch exception for doWork()
             threadMachine.WriteShareData(doWork()); // Access the shared storage to store result of doWork() safely under multi-thread.
             threadMachine.DoneWork(); // Notify threadMachine that the work has been done.
         }
