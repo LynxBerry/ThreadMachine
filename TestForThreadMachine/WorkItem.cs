@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ThreadMachine
+namespace TestForThreadMachine
 {
     //Example of consumer
     public class WorkItem
@@ -16,7 +16,7 @@ namespace ThreadMachine
         }
         public string DoWork()
         {
-            Console.WriteLine(this.strID + ":hello");
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss tt") + "Test Case>>Do Work Started for: " + this.strID);
             return this.strID + ":Say Something";
         }
     }

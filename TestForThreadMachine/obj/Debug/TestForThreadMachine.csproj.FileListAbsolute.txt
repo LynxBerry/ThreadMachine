@@ -1,0 +1,10 @@
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\bin\Debug\TestForThreadMachine.dll
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\bin\Debug\TestForThreadMachine.pdb
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\bin\Debug\ThreadMachine.dll
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\bin\Debug\ThreadMachine.pdb
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\obj\Debug\TestForThreadMachine.csprojResolveAssemblyReference.cache
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\obj\Debug\TestForThreadMachine.dll
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\obj\Debug\TestForThreadMachine.pdb
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\TestForThreadMachine\bin\Debug\TestMaterial\sl.txt

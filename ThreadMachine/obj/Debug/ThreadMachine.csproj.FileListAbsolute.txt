@@ -1,6 +1,6 @@
-C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\bin\Debug\ThreadMachine.exe.config
-C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\bin\Debug\ThreadMachine.exe
 C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\bin\Debug\ThreadMachine.pdb
 C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\obj\Debug\ThreadMachine.csprojResolveAssemblyReference.cache
-C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\obj\Debug\ThreadMachine.exe
 C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\obj\Debug\ThreadMachine.pdb
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\bin\Debug\ThreadMachine.dll.config
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\bin\Debug\ThreadMachine.dll
+C:\Users\stevensh\OneDrive\Code\ThreadMachine\ThreadMachine\obj\Debug\ThreadMachine.dll
