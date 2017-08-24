@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TestForThreadMachine
@@ -24,6 +25,13 @@ namespace TestForThreadMachine
         {
             Console.WriteLine(DateTime.Now.ToString("hh:mm:ss tt") + ":Test Case With Error>>Do Work Started for: " + this.strID);
             throw new Exception("error" + this.strID);
+            return this.strID + ":Say Something";
+        }
+
+        public string DoWorkWithTimeout() // Work Will raise Exception
+        {
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss tt") + ":Test Case With Timeout>>Do Work Started for: " + this.strID);
+            Thread.Sleep(60000); // 60 secs;
             return this.strID + ":Say Something";
         }
     }

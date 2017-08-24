@@ -11,6 +11,7 @@ namespace ThreadMachine
     {
         private ThreadMachine<T> threadMachine;
         private Func<T> doWork;
+        T result = default(T);
 
         internal ThreadItem(Func<T> doWork) //customer has no need to know.
         {
@@ -29,7 +30,41 @@ namespace ThreadMachine
         internal void WorkProc(Object state) // The param here is just for aligning with signature of thread's delegate.
         {
             // To Do: Need to catch exception for doWork()
-            threadMachine.WriteShareData(doWork()); // Access the shared storage to store result of doWork() safely under multi-thread.
+            
+            try
+            {
+                result = doWork();
+            }
+            catch(ThreadAbortException e)
+            {
+                //Console.WriteLine
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("error>>" + e.Message );
+                //Console.WriteLine("xxx");
+
+            }
+            //threadMachine.WriteShareData(result); // Access the shared storage to store result of doWork() safely under multi-thread.
+            //threadMachine.DoneWork(); // Notify threadMachine that the work has been done.
+        }
+
+        internal void WorkProcWrapper(Object state)
+        {
+            Thread t = new Thread(WorkProc);
+            t.Start();
+            if (!t.Join(TimeSpan.FromSeconds(5)))
+            {
+                t.Abort();
+                //throw new Exception("Time out");
+                Console.WriteLine("Timeout & Thread aborted.");
+                threadMachine.WriteShareData(default(T)); // Access the shared storage to store result of doWork() safely under multi-thread.
+                
+            } else
+            {
+                threadMachine.WriteShareData(result);
+            }
+
             threadMachine.DoneWork(); // Notify threadMachine that the work has been done.
         }
 
@@ -88,7 +123,7 @@ namespace ThreadMachine
             {
                 count++;
 
-                ThreadPool.QueueUserWorkItem(new WaitCallback(threadItem.WorkProc));
+                ThreadPool.QueueUserWorkItem(new WaitCallback(threadItem.WorkProcWrapper));
                 
                 if ((count % 20) == 0)
                 {

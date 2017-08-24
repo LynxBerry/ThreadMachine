@@ -9,7 +9,7 @@ namespace TestForThreadMachine
     public class UnitTest1
     {
         [TestMethod]
-        public void TestMethod1()
+        public void TestNormalCase()
         {
             ThreadMachine<string> thMachine = new ThreadMachine<string>();
             List<string> lItems = TestHelper.ReadFileToServerList(@"TestMaterial\sl.txt");
@@ -21,11 +21,24 @@ namespace TestForThreadMachine
             };
         }
         [TestMethod]
-        public void TestMethod2() //What if Do Work raise exception
+        public void TestErrorCase() //What if Do Work raise exception
         {
             ThreadMachine<string> thMachine = new ThreadMachine<string>();
             List<string> lItems = TestHelper.ReadFileToServerList(@"TestMaterial\sl.txt");
             lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWorkWithError));
+            thMachine.InvokeMultiThread();
+            foreach (string strItem in thMachine.GetResults())
+            {
+                Console.WriteLine(strItem);
+            };
+        }
+
+        [TestMethod]
+        public void TestTimeoutCase() //What if underlying work exceeds timeout.
+        {
+            ThreadMachine<string> thMachine = new ThreadMachine<string>();
+            List<string> lItems = TestHelper.ReadFileToServerList(@"TestMaterial\sl.txt");
+            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWorkWithTimeout));
             thMachine.InvokeMultiThread();
             foreach (string strItem in thMachine.GetResults())
             {
