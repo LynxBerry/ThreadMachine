@@ -13,7 +13,7 @@ namespace TestForThreadMachine
         {
             ThreadMachine<string> thMachine = new ThreadMachine<string>();
             List<string> lItems = TestHelper.ReadFileToServerList(@"TestMaterial\sl.txt");
-            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWork));
+            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWork, i));
             thMachine.InvokeMultiThread();
             foreach (string strItem in thMachine.GetResults())
             {
@@ -25,7 +25,7 @@ namespace TestForThreadMachine
         {
             ThreadMachine<string> thMachine = new ThreadMachine<string>();
             List<string> lItems = TestHelper.ReadFileToServerList(@"TestMaterial\sl.txt");
-            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWorkWithError));
+            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWorkWithError, i));
             thMachine.InvokeMultiThread();
             foreach (string strItem in thMachine.GetResults())
             {
@@ -38,7 +38,7 @@ namespace TestForThreadMachine
         {
             ThreadMachine<string> thMachine = new ThreadMachine<string>();
             List<string> lItems = TestHelper.ReadFileToServerList(@"TestMaterial\sl.txt");
-            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWorkWithTimeout));
+            lItems.ForEach(i => thMachine.QueueItem(new WorkItem(i).DoWorkWithTimeout, i));
             thMachine.InvokeMultiThread();
             foreach (string strItem in thMachine.GetResults())
             {

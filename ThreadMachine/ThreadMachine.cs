@@ -11,11 +11,13 @@ namespace ThreadMachine
     {
         private ThreadMachine<T> threadMachine;
         private Func<T> doWork;
+        private string tracker; // for tracking which thread it is. Give it a name.
         T result = default(T);
 
-        internal ThreadItem(Func<T> doWork) //customer has no need to know.
+        internal ThreadItem(Func<T> doWork, string tracker) //customer has no need to know.
         {
             this.doWork = doWork;
+            this.tracker = tracker;
         }
 
         internal void setThreadMachine(ThreadMachine<T> threadMachine)
@@ -29,8 +31,7 @@ namespace ThreadMachine
          */
         internal void WorkProc(Object state) // The param here is just for aligning with signature of thread's delegate.
         {
-            // To Do: Need to catch exception for doWork()
-            
+            // To Do: Need to catch exception for doWork()            
             try
             {
                 result = doWork();
@@ -41,12 +42,8 @@ namespace ThreadMachine
             }
             catch(Exception e)
             {
-                Console.WriteLine("error>>" + e.Message );
-                //Console.WriteLine("xxx");
-
+                Console.WriteLine("{0}>>{1}",tracker, e.Message );
             }
-            //threadMachine.WriteShareData(result); // Access the shared storage to store result of doWork() safely under multi-thread.
-            //threadMachine.DoneWork(); // Notify threadMachine that the work has been done.
         }
 
         internal void WorkProcWrapper(Object state)
@@ -56,8 +53,7 @@ namespace ThreadMachine
             if (!t.Join(TimeSpan.FromSeconds(5)))
             {
                 t.Abort();
-                //throw new Exception("Time out");
-                Console.WriteLine("Timeout & Thread aborted.");
+                Console.WriteLine("{0}>>Timeout & Thread aborted.", tracker);
                 threadMachine.WriteShareData(default(T)); // Access the shared storage to store result of doWork() safely under multi-thread.
                 
             } else
@@ -78,10 +74,18 @@ namespace ThreadMachine
         private object objLock = new Object(); // used to lock critical section.
         private List<T> dictResults = new List<T>(); // for collecting results. 
 
+        private int maxThreads = 20;
+        private int interval = 20000; //20 secs
 
         public ThreadMachine()
         {
             //nothing to do
+        }
+
+        public ThreadMachine(int maxThreads, int interval)
+        {
+            this.maxThreads = maxThreads;
+            this.interval = interval;
         }
 
         public List<T> GetResults()
@@ -107,9 +111,9 @@ namespace ThreadMachine
             }
         }
 
-        public void QueueItem(Func<T> doWork)
+        public void QueueItem(Func<T> doWork, string tracker)
         {
-            var handle = new ThreadItem<T>(doWork);
+            var handle = new ThreadItem<T>(doWork, tracker);
             handle.setThreadMachine(this);
             lItems.Add(handle);
             nItems++;
@@ -118,6 +122,7 @@ namespace ThreadMachine
 
         public void InvokeMultiThread()
         {
+            ThreadPool.SetMaxThreads(maxThreads, maxThreads);
             int count = 0;
             foreach (ThreadItem<T> threadItem in lItems)
             {
@@ -125,15 +130,17 @@ namespace ThreadMachine
 
                 ThreadPool.QueueUserWorkItem(new WaitCallback(threadItem.WorkProcWrapper));
                 
-                if ((count % 20) == 0)
+                if ((count % maxThreads) == 0)
                 {
 
                     Console.WriteLine("sleep for a while");
                     //sleep 20 seconds
-                    Thread.Sleep(20000);
+                    Thread.Sleep(interval);
                 }
                 
             }
+
+            
 
             this.objFinishEvent.WaitOne();
 
